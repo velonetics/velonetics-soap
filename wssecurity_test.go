@@ -39,3 +39,27 @@ func TestApplyWSSecuritySAML(t *testing.T) {
 		t.Fatalf("missing assertion: %s", out)
 	}
 }
+
+func TestApplyWSSecurityX509(t *testing.T) {
+	body := []byte(`<?xml version="1.0"?>
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+  <Body><CountryFlag/></Body>
+</Envelope>`)
+	cfg := &WSSecurityConfig{
+		X509: &X509Config{
+			CertPath: "testdata/client.pem",
+			KeyPath:  "testdata/client-key.pem",
+		},
+	}
+	out, err := applyWSSecurity(body, cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := string(out)
+	if !strings.Contains(s, "Signature") {
+		t.Fatalf("missing signature: %s", s)
+	}
+	if !strings.Contains(s, "CountryFlag") {
+		t.Fatalf("body altered unexpectedly: %s", s)
+	}
+}
