@@ -11,6 +11,13 @@ import (
 	"github.com/velonetics/lura/v2/proxy"
 )
 
+// ErrorProxy returns a proxy that always fails with the given initialization error.
+func ErrorProxy(err error) proxy.Proxy {
+	return func(ctx context.Context, _ *proxy.Request) (*proxy.Response, error) {
+		return nil, err
+	}
+}
+
 // BackendFactory returns a proxy.BackendFactory that wraps HTTP backends with SOAP
 // template request body generation when backend/soap extra_config is present.
 func BackendFactory(l logging.Logger, bf proxy.BackendFactory) proxy.BackendFactory {
@@ -22,6 +29,7 @@ func BackendFactory(l logging.Logger, bf proxy.BackendFactory) proxy.BackendFact
 		if err != nil {
 			if err != errNoConfig {
 				l.Error(logPrefix, err)
+				return ErrorProxy(err)
 			}
 			return next
 		}
