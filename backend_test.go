@@ -180,7 +180,7 @@ func TestParseConfig_inlineTemplate(t *testing.T) {
 				"content_type": "application/xml",
 			},
 		},
-	})
+	}, logging.NoOp, "[TEST]")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -203,11 +203,11 @@ func TestParseConfig_pathTemplate(t *testing.T) {
 				"path": path,
 			},
 		},
-	})
+	}, logging.NoOp, "[TEST]")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if cfg.tmpl == nil {
+	if cfg.holder.get() == nil {
 		t.Fatal("expected parsed template")
 	}
 }
@@ -252,6 +252,35 @@ func TestBackendFactory_replacesBody(t *testing.T) {
 	}
 }
 
+func TestBackendFactory_setsSOAPAction(t *testing.T) {
+	encoded := base64.StdEncoding.EncodeToString([]byte(`<soap>{{ .req_params.Code }}</soap>`))
+	var captured *proxy.Request
+	bf := BackendFactory(logging.NoOp, func(remote *config.Backend) proxy.Proxy {
+		return func(_ context.Context, r *proxy.Request) (*proxy.Response, error) {
+			captured = r
+			return &proxy.Response{}, nil
+		}
+	})
+
+	p := bf(&config.Backend{
+		URLPattern: "/flag",
+		ExtraConfig: config.ExtraConfig{
+			Namespace: map[string]interface{}{
+				"template":    encoded,
+				"soap_action": "http://example.com/CountryFlag",
+			},
+		},
+	})
+
+	_, err := p(context.Background(), &proxy.Request{Params: map[string]string{"Code": "US"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if captured.Headers["SOAPAction"][0] != `"http://example.com/CountryFlag"` {
+		t.Fatalf("SOAPAction: %v", captured.Headers["SOAPAction"])
+	}
+}
+
 func mustConfig(t *testing.T, tmpl, contentType string) *Config {
 	t.Helper()
 	ecfg := map[string]interface{}{
@@ -265,7 +294,7 @@ func mustConfig(t *testing.T, tmpl, contentType string) *Config {
 		ExtraConfig: config.ExtraConfig{
 			Namespace: ecfg,
 		},
-	})
+	}, logging.NoOp, "[TEST]")
 	if err != nil {
 		t.Fatal(err)
 	}

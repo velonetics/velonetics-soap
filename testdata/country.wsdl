@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             targetNamespace="http://www.example.com/countryinfo">
+  <portType name="CountryInfoPortType">
+    <operation name="CountryFlag"/>
+  </portType>
+  <binding name="CountryInfoBinding" type="tns:CountryInfoPortType"
+             xmlns:tns="http://www.example.com/countryinfo">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="CountryFlag">
+      <soap:operation soapAction="http://www.example.com/CountryFlag"/>
+    </operation>
+  </binding>
+  <service name="CountryInfoService">
+    <port name="CountryInfoPort" binding="tns:CountryInfoBinding"
+          xmlns:tns="http://www.example.com/countryinfo">
+      <soap:address location="http://127.0.0.1:8081/CountryInfoService.wso"/>
+    </port>
+  </service>
+</definitions>

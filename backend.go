@@ -18,7 +18,7 @@ func BackendFactory(l logging.Logger, bf proxy.BackendFactory) proxy.BackendFact
 		logPrefix := "[BACKEND: " + remote.URLPattern + "][SOAP]"
 		next := bf(remote)
 
-		cfg, err := parseConfig(remote)
+		cfg, err := parseConfig(remote, l, logPrefix)
 		if err != nil {
 			if err != errNoConfig {
 				l.Error(logPrefix, err)
@@ -40,6 +40,10 @@ func BackendFactory(l logging.Logger, bf proxy.BackendFactory) proxy.BackendFact
 			}
 			r.Headers["Content-Type"] = []string{cfg.ContentType}
 			r.Headers["Content-Length"] = []string{strconv.Itoa(len(body))}
+
+			if action := soapActionHeaderValue(cfg.SOAPAction, cfg.WSDLAction); action != "" {
+				r.Headers["SOAPAction"] = []string{action}
+			}
 
 			return next(ctx, r)
 		}

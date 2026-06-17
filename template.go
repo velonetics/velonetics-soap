@@ -26,12 +26,22 @@ func (c *Config) render(l logging.Logger, logPrefix string, r *proxy.Request) ([
 		}
 	}
 
+	tmpl := c.holder.get()
+	if tmpl == nil {
+		return nil, nil, errLoadTemplate
+	}
+
 	var buf bytes.Buffer
-	if err := c.tmpl.Execute(&buf, data); err != nil {
+	if err := tmpl.Execute(&buf, data); err != nil {
 		return nil, nil, err
 	}
 
 	out := buf.Bytes()
+	out, err = applyWSSecurity(out, c.WSSecurity)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if c.Debug {
 		l.Debug(logPrefix, "Generated content-type:", c.ContentType)
 		l.Debug(logPrefix, "Generated body:\n", string(out))

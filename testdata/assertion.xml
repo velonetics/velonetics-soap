@@ -1,0 +1,3 @@
+<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="assertion-1">
+  <saml:Subject><saml:NameID>user@example.com</saml:NameID></saml:Subject>
+</saml:Assertion>
