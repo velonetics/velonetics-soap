@@ -3,6 +3,8 @@ package soap
 import (
 	"crypto"
 	"crypto/tls"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 	"os"
 	"time"
@@ -123,7 +125,7 @@ func signWithX509(body []byte, cfg *X509Config) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	keyPair, err := tls.X509KeyPair(certPEM, keyPEM)
+	keyPair, err := loadTLSKeyPair(certPEM, keyPEM, cfg.KeyPassword)
 	if err != nil {
 		return nil, err
 	}
@@ -155,4 +157,22 @@ func signWithX509(body []byte, cfg *X509Config) ([]byte, error) {
 	out := etree.NewDocument()
 	out.SetRoot(signed)
 	return out.WriteToBytes()
+}
+
+func loadTLSKeyPair(certPEM, keyPEM []byte, password string) (tls.Certificate, error) {
+	if password == "" {
+		return tls.X509KeyPair(certPEM, keyPEM)
+	}
+	block, _ := pem.Decode(keyPEM)
+	if block == nil {
+		return tls.Certificate{}, fmt.Errorf("soap: failed to decode private key PEM")
+	}
+	if x509.IsEncryptedPEMBlock(block) {
+		der, err := x509.DecryptPEMBlock(block, []byte(password))
+		if err != nil {
+			return tls.Certificate{}, fmt.Errorf("soap: decrypt private key: %w", err)
+		}
+		keyPEM = pem.EncodeToMemory(&pem.Block{Type: block.Type, Bytes: der})
+	}
+	return tls.X509KeyPair(certPEM, keyPEM)
 }

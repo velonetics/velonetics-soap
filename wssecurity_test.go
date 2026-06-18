@@ -1,6 +1,10 @@
 package soap
 
 import (
+	"crypto/rand"
+	"crypto/x509"
+	"encoding/pem"
+	"os"
 	"strings"
 	"testing"
 )
@@ -61,5 +65,30 @@ func TestApplyWSSecurityX509(t *testing.T) {
 	}
 	if !strings.Contains(s, "CountryFlag") {
 		t.Fatalf("body altered unexpectedly: %s", s)
+	}
+}
+
+func TestLoadTLSKeyPairEncryptedPassword(t *testing.T) {
+	certPEM, err := os.ReadFile("testdata/client.pem")
+	if err != nil {
+		t.Fatal(err)
+	}
+	keyPEM, err := os.ReadFile("testdata/client-key.pem")
+	if err != nil {
+		t.Fatal(err)
+	}
+	block, _ := pem.Decode(keyPEM)
+	if block == nil {
+		t.Fatal("failed to decode key PEM")
+	}
+	encrypted, err := x509.EncryptPEMBlock(rand.Reader, block.Type, block.Bytes, []byte("secret"), x509.PEMCipherDES)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := loadTLSKeyPair(certPEM, pem.EncodeToMemory(encrypted), "secret"); err != nil {
+		t.Fatalf("expected encrypted key to load with password: %v", err)
+	}
+	if _, err := loadTLSKeyPair(certPEM, pem.EncodeToMemory(encrypted), "wrong"); err == nil {
+		t.Fatal("expected wrong password to fail")
 	}
 }
