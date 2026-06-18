@@ -180,7 +180,7 @@ func TestParseConfig_inlineTemplate(t *testing.T) {
 				"content_type": "application/xml",
 			},
 		},
-	}, logging.NoOp, "[TEST]")
+	}, logging.NoOp, "[TEST]", false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -203,7 +203,7 @@ func TestParseConfig_pathTemplate(t *testing.T) {
 				"path": path,
 			},
 		},
-	}, logging.NoOp, "[TEST]")
+	}, logging.NoOp, "[TEST]", false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -294,7 +294,7 @@ func mustConfig(t *testing.T, tmpl, contentType string) *Config {
 		ExtraConfig: config.ExtraConfig{
 			Namespace: ecfg,
 		},
-	}, logging.NoOp, "[TEST]")
+	}, logging.NoOp, "[TEST]", false)
 	if err != nil {
 		t.Fatal(err)
 	}

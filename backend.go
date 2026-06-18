@@ -25,7 +25,7 @@ func BackendFactory(l logging.Logger, bf proxy.BackendFactory) proxy.BackendFact
 		logPrefix := "[BACKEND: " + remote.URLPattern + "][SOAP]"
 		next := bf(remote)
 
-		cfg, err := parseConfig(remote, l, logPrefix)
+		cfg, err := parseConfig(remote, l, logPrefix, true)
 		if err != nil {
 			if err != errNoConfig {
 				l.Error(logPrefix, err)

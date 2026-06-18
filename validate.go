@@ -18,7 +18,7 @@ func ValidateConfig(cfg *config.ServiceConfig) error {
 			if _, ok := b.ExtraConfig[Namespace]; !ok {
 				continue
 			}
-			if _, err := parseConfig(b, logger, "[VALIDATE: SOAP]"); err != nil {
+			if _, err := parseConfig(b, logger, "[VALIDATE: SOAP]", false); err != nil {
 				return fmt.Errorf("endpoint %q backend %q: %w", ep.Endpoint, b.URLPattern, err)
 			}
 		}

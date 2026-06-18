@@ -33,7 +33,7 @@ type Config struct {
 	holder        *templateHolder
 }
 
-func parseConfig(remote *config.Backend, logger logging.Logger, logPrefix string) (*Config, error) {
+func parseConfig(remote *config.Backend, logger logging.Logger, logPrefix string, startBackground bool) (*Config, error) {
 	v, ok := remote.ExtraConfig[Namespace]
 	if !ok {
 		return nil, errNoConfig
@@ -119,7 +119,9 @@ func parseConfig(remote *config.Backend, logger logging.Logger, logPrefix string
 		}
 		interval = d
 	}
-	cfg.holder.startBackground(watch, interval)
+	if startBackground {
+		cfg.holder.startBackground(watch, interval)
+	}
 
 	return cfg, nil
 }
