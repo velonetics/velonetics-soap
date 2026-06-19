@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	Namespace          = "github.com/pucora/velonetics-soap/v2"
+	Namespace          = "github.com/pucora/pucora-soap/v2"
 	defaultContentType = "text/xml"
 )
 

@@ -1,4 +1,4 @@
-module github.com/pucora/velonetics-soap/v2
+module github.com/pucora/pucora-soap/v2
 
 go 1.25.0
 
