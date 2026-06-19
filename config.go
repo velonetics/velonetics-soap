@@ -5,12 +5,12 @@ import (
 	"errors"
 	"time"
 
-	"github.com/velonetics/lura/v2/config"
-	"github.com/velonetics/lura/v2/logging"
+	"github.com/pucora/lura/v2/config"
+	"github.com/pucora/lura/v2/logging"
 )
 
 const (
-	Namespace          = "github.com/velonetics/velonetics-soap/v2"
+	Namespace          = "github.com/pucora/velonetics-soap/v2"
 	defaultContentType = "text/xml"
 )
 

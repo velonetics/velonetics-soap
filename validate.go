@@ -3,8 +3,8 @@ package soap
 import (
 	"fmt"
 
-	"github.com/velonetics/lura/v2/config"
-	"github.com/velonetics/lura/v2/logging"
+	"github.com/pucora/lura/v2/config"
+	"github.com/pucora/lura/v2/logging"
 )
 
 // ValidateConfig checks backend/soap settings at startup.
