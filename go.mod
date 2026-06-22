@@ -8,7 +8,7 @@ require (
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/pucora/lura/v2 v2.0.9
 	github.com/russellhaering/goxmldsig v1.5.0
-	golang.org/x/net v0.55.0
+	golang.org/x/net v0.56.0
 )
 
 require (
@@ -19,6 +19,6 @@ require (
 	github.com/pucora/flatmap v1.0.1 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/valyala/fastrand v1.1.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
-	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
+	golang.org/x/text v0.38.0 // indirect
 )
